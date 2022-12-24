@@ -1,0 +1,38 @@
+{
+    "name": "hopex/simplog",
+    "description": "Simple data logging with customize directories.",
+    "type": "library",
+    "keywords": ["php", "log", "logger"],
+    "version": "1.0.1",
+    "require": {
+        "php": "^7.4||^8",
+        "ext-json": "*",
+        "illuminate/support": "^9.45"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Hopex\\Simplog\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Schizo",
+            "email": "hopex.schizo@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Hopex\\Simplog\\Providers\\ServiceProvider"
+            ],
+            "aliases": {
+                "Logger": "Hopex\\Simplog\\Facades\\Logger"
+            }
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "stable"
+}
