@@ -7,7 +7,7 @@
     <img alt="License Badge" src="https://img.shields.io/endpoint?url=https://packages-api.hopex.ru/simplog/badges/license">
 </p>
 
-> The library contains a simple class, and it's facade, for simple data and exception logging.
+The library contains a simple class, and it's facade, for simple data and exception logging.
 
 ### Installing
 ```
