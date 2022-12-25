@@ -1,6 +1,7 @@
-# MIT License
+MIT License
 
-> Copyright (c) 2022 [Schizo](https://vk.com/id244036703)
+Copyright (c) 2022 Schizo
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
