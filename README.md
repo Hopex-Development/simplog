@@ -1,10 +1,12 @@
 # Hopex Logging
 
 <p>
-    <img alt="Version Badge" src="https://img.shields.io/endpoint?url=https://packages-api.hopex.ru/simplog/badges/version/package">
-    <img alt="PHP Badge" src="https://img.shields.io/endpoint?url=https://packages-api.hopex.ru/simplog/badges/version/php">
-    <img alt="Laravel Badge" src="https://img.shields.io/endpoint?url=https://packages-api.hopex.ru/simplog/badges/version/laravel">
-    <img alt="License Badge" src="https://img.shields.io/endpoint?url=https://packages-api.hopex.ru/simplog/badges/license">
+    <img alt="Package version" src="https://packages-api.hopex.ru/api/simplog/version/package">
+    <img alt="Package version" src="https://packages-api.hopex.ru/api/simplog/packagist/hopex/downloads">
+    <img alt="Package version" src="https://packages-api.hopex.ru/api/simplog/packagist/hopex/stars">
+    <img alt="PHP version" src="https://packages-api.hopex.ru/api/simplog/version/php">
+    <img alt="Laravel version" src="https://packages-api.hopex.ru/api/simplog/version/laravel">
+    <img alt="License" src="https://packages-api.hopex.ru/api/simplog/license">
 </p>
 
 The library contains a simple class, and it's facade, for simple data and exception logging on JSON format.
@@ -29,7 +31,14 @@ Provider and facades will be automatically registered, however you can manually 
 ])->toArray(),
 ```
 
-## Usage
+## Usage in Laravel
+
+Simple data logging. Your data will be saved to a file `./public/logs/runtime/NameOfLogFile.log`:
+```php
+Logger::putData($data, 'NameOfLogFile');
+```
+
+## Default usage
 
 Simple data logging. Your data will be saved to a file `./logs/runtime/NameOfLogFile.log`:
 ```php
