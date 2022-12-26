@@ -96,6 +96,7 @@ class Logger
      */
     public function putData($data, string $fileName)
     {
+        $fileName = preg_replace('~^(.*)\.log$~', "$1", $fileName);
         date_default_timezone_set($this->timeZone);
 
         $above = [];
