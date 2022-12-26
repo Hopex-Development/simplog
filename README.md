@@ -1,11 +1,10 @@
-# Hopex Logging
+# Simple data logging
 
 <p>
     <img alt="Package version" src="https://packages-api.hopex.ru/api/simplog/version/package">
     <img alt="Package version" src="https://packages-api.hopex.ru/api/simplog/packagist/hopex/downloads">
     <img alt="Package version" src="https://packages-api.hopex.ru/api/simplog/packagist/hopex/stars">
     <img alt="PHP version" src="https://packages-api.hopex.ru/api/simplog/version/php">
-    <img alt="Laravel version" src="https://packages-api.hopex.ru/api/simplog/version/laravel">
     <img alt="License" src="https://packages-api.hopex.ru/api/simplog/license">
 </p>
 
@@ -17,28 +16,7 @@ The library contains a simple class, and it's facade, for simple data and except
 composer require hopex/simplog
 ```
 
-## Dependencies in Laravel
-
-Provider and facades will be automatically registered, however you can manually add them to `config/app.php`.
-```php
-'providers' => [
-    // ...
-    Hopex\Simplog\Providers\ServiceProvider::class,
-],
-'aliases' => Facade::defaultAliases()->merge([
-    // ...
-    'Logger' => \Hopex\Simplog\Logger::class,
-])->toArray(),
-```
-
-## Usage in Laravel
-
-Simple data logging. Your data will be saved to a file `./public/logs/runtime/NameOfLogFile.log`:
-```php
-Logger::putData($data, 'NameOfLogFile');
-```
-
-## Default usage
+## Usage
 
 Simple data logging. Your data will be saved to a file `./logs/runtime/NameOfLogFile.log`:
 ```php
@@ -56,6 +34,7 @@ saved along the path `./example/logs/MyLevel/NameOfLogFile.log`:
     ->setLevel('MyLevel')
     ->putData($data, 'NameOfLogFile');
 ```
+
 ### Date and time format
 
 Timezone default UTC and date format is `Y-m-d H:i:s`. You can also change the time format and time zone that are used inside the logging files:
@@ -101,6 +80,7 @@ Output log file `./logs/exceptions/2022.24.12.log`:
     }
 }
 ```
+
 ### Common
 
 The class has a built-in function `clearLevel` of cleaning the logging working directory 
