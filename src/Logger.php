@@ -132,14 +132,16 @@ class Logger
      * @param Throwable $throwable
      * @param string $fileName
      * @param bool $withTrace
+     * @param array $payload
      * @return void
      */
     public function putException(
         Throwable $throwable,
         string $fileName,
-        bool $withTrace = false
+        bool $withTrace = false,
+        array $payload = []
     ) {
-        $this->putData(array_merge([
+        $this->putData(array_merge($payload, [
             'message' => $throwable->getMessage(),
             'file' => $throwable->getFile(),
             'line' => $throwable->getLine(),
