@@ -13,66 +13,131 @@ namespace Hopex\Simplog;
 
 use Throwable;
 
+/**
+ * Class Logger
+ * @package Hopex\Simplog
+ */
 class Logger
 {
     /**
      * @var string
      */
-    private string $workDirectory = '.' . DIRECTORY_SEPARATOR . 'logs';
+    private string $workDirectory;
 
     /**
      * @var string
      */
-    private string $level = 'runtime';
+    private string $level;
 
     /**
      * @var string
      */
-    private string $timeZone = 'UTC';
+    private string $dateFormat;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private string $dateFormat = 'd-m-Y H:i:s';
+    private ?string $itemKey;
+
+    /**
+     * @var int
+     */
+    private int $itemsLimit;
 
     /**
      * @var bool
      */
-    private bool $clearLevel = false;
+    private bool $clearLevel;
 
     /**
+     * @var int
+     */
+    private int $permissions;
+
+    /**
+     * @var string
+     */
+    private string $fileName;
+
+    public function __construct()
+    {
+        $this->clearLevel = false;
+        $this->setWorkDirectory('.' . DIRECTORY_SEPARATOR . 'logs');
+        $this->setLevel('runtime');
+        $this->setPermissions(0755);
+        $this->setItemKey(null);
+        $this->setItemsLimit(1000);
+        $this->setTimeZone('UTC');
+        $this->setDateFormat('H:i:s');
+        $this->setFileName(date('Y-m-d'));
+    }
+
+    /**
+     * Specifies the root directory of the
+     * hierarchy of logging levels.
+     * It can take several directories
+     * in turn one after the other in the
+     * form of a standard path.
+     *
      * @param string $workDirectory
+     *
      * @return Logger
+     *
+     * @example setWorkDirectory('logging')
+     * @example setWorkDirectory('logging/sub-folder')
      */
     public function setWorkDirectory(string $workDirectory): Logger
     {
-        $this->workDirectory = $workDirectory;
+        $this->workDirectory = $this->clearPath($workDirectory);
         return $this;
     }
 
     /**
+     * Specifies the name of the directory
+     * where you want to save the logging file.
+     * It can't take several directories
+     * in turn one after the other in the
+     * form of a standard path.
+     *
      * @param string $level
+     *
      * @return Logger
+     *
+     * @example setLevel('requests')
      */
     public function setLevel(string $level): Logger
     {
-        $this->level = strtolower($level);
+        $this->level = $this->clearPath($level);
         return $this;
     }
 
     /**
+     * Specifies the current timezone.
+     *
      * @param string $timeZone
+     *
      * @return Logger
+     *
+     * @example setTimeZone('UTC')
+     * @example setTimeZone('Europe/Amsterdam')
      */
     public function setTimeZone(string $timeZone): Logger
     {
-        $this->timeZone = $timeZone;
+        date_default_timezone_set($timeZone);
         return $this;
     }
 
     /**
+     * Sets the time format in the main key of
+     * one log element in the logging file.
+     * Will not be used if V is specified.
+     *
      * @param string $dateFormat
+     *
      * @return Logger
+     *
+     * @example setDateFormat('H:i:s')
+     * @example setDateFormat('(Y) H:i:s')
      */
     public function setDateFormat(string $dateFormat): Logger
     {
@@ -81,6 +146,28 @@ class Logger
     }
 
     /**
+     * Sets the primary key of one log element in
+     * the logging file.
+     * In this case, the current time will not
+     * be indicated.
+     *
+     * @param string|null $itemKey
+     *
+     * @return Logger
+     *
+     * @example setItemKey('custom-key')
+     */
+    public function setItemKey(?string $itemKey): Logger
+    {
+        $this->itemKey = $itemKey;
+        return $this;
+    }
+
+    /**
+     * The requirement to clear the directory
+     * where the logging file should be
+     * saved from other files.
+     *
      * @return Logger
      */
     public function clearLevel(): Logger
@@ -90,14 +177,158 @@ class Logger
     }
 
     /**
+     * Sets the maximum number of elements in a
+     * single logging file.
+     * The value must be greater than zero.
+     * By default, 1000 keys.
+     *
+     * @param int $itemsLimit
+     *
+     * @return Logger
+     *
+     * @example setItemsLimit(10)
+     * @example setItemsLimit(5000)
+     */
+    public function setItemsLimit(int $itemsLimit): Logger
+    {
+        if ($itemsLimit > 0) {
+            $this->itemsLimit = $itemsLimit;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets access rights to the logging file.
+     *
+     * @param int $rights
+     *
+     * @return Logger
+     *
+     * @example setLogFilePermissions(0755)
+     * @example setLogFilePermissions(644)
+     */
+    public function setPermissions(int $rights): Logger
+    {
+        $this->permissions = $rights;
+        return $this;
+    }
+
+    /**
+     * Sets the name of the logging file.
+     *
+     * @param string $fileName
+     *
+     * @return Logger
+     *
+     * @example setFileName('my-requests-logs')
+     */
+    public function setFileName(string $fileName): Logger
+    {
+        $this->fileName = $this->clearFileName($fileName);
+        return $this;
+    }
+
+    /**
+     * Removes forbidden characters from file name.
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    private function clearFileName(string $path): string
+    {
+        return preg_replace(
+            '~(\||<|>|\*|\?|\\|\/|#|^CON$|^PRN$|^AUX$|^NUL$|^COM1$|^COM2$|^COM3$|^COM4$|^COM5$|^COM6$|^COM7$|^COM8$|^COM9$|^LPT1$|^LPT2$|^LPT3$|^LPT4$|^LPT5$|^LPT6$|^LPT7$|^LPT8$|^LPT9$)~',
+            '-', $path
+        );
+    }
+
+    /**
+     * Removes forbidden characters from paths.
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    private function clearPath(string $path): string
+    {
+        return trim(preg_replace(
+            '~(\||<|>|\*|\?|#)~',
+            '',
+            preg_replace('~(\\{2,}|\/{2,})~', DIRECTORY_SEPARATOR, $path)
+        ), '-');
+    }
+
+    /**
+     * Logging any object as an error message.
+     *
      * @param $data
-     * @param string|null $fileName
+     *
      * @return void
      */
-    public function putData($data, string $fileName)
+    public function error($data): void
     {
-        $fileName = preg_replace('~^(.*)\.log$~', "$1", $fileName);
-        date_default_timezone_set($this->timeZone);
+        $this->loggingType($data, 'error');
+    }
+
+    /**
+     * Logging any object as a warning.
+     *
+     * @param $data
+     *
+     * @return void
+     */
+    public function warning($data): void
+    {
+        $this->loggingType($data, 'warning');
+    }
+
+    /**
+     * Logging of any object as an
+     * informational message.
+     *
+     * @param $data
+     *
+     * @return void
+     */
+    public function info($data): void
+    {
+        $this->loggingType($data, 'info');
+    }
+
+    /**
+     * Dynamic change of logging type.
+     *
+     * @param $data
+     * @param string $type
+     *
+     * @return void
+     */
+    private function loggingType($data, string $type): void
+    {
+        $this
+            ->setLevel($this->level . DIRECTORY_SEPARATOR . $type . 's')
+            ->setFileName(sprintf("$type-%s", date('Y-m-d')))
+            ->setItemKey(date('H:i:s'))
+            ->custom($data);
+    }
+
+    /**
+     * Logging of any object.
+     *
+     * @param $data
+     *
+     * @return void
+     *
+     * @example put((new SomeClass(), sprintf("classes-%s", date('H:i:s')))
+     * @example put('Some message', 'messages.log')
+     * @example put('Some message', 'messages')
+     * @example put(['key' => 'value'], 'arrays')
+     */
+    public function custom($data)
+    {
+        $fileName = preg_replace('~^(.*)\.log$~', "$1", $this->fileName);
 
         $above = [];
         $nowTime = date($this->dateFormat);
@@ -105,7 +336,7 @@ class Logger
         $fileLog = $directoryLog . DIRECTORY_SEPARATOR . $fileName . '.log';
 
         if (!file_exists($directoryLog)) {
-            mkdir($directoryLog, 0755, true);
+            mkdir($directoryLog, 0644, true);
         }
 
         if ($this->clearLevel) {
@@ -117,36 +348,51 @@ class Logger
         }
 
         if (file_exists($fileLog)) {
-            $above = json_decode(file_get_contents($fileLog) ?? '{}', true) ?? [];
+            $above = array_slice(
+                json_decode(file_get_contents($fileLog) ?? '{}', true) ?? [],
+                0,
+                $this->itemsLimit - 1
+            );
         }
 
         file_put_contents(
             $fileLog,
             json_encode(array_merge([
-                $nowTime => $data
+                sprintf(
+                    ($this->itemKey ?? $nowTime) . " (%s)",
+                    substr(hash("md5", mt_rand(0, 10000)), 0 ,8)
+                )  => $data
             ], $above), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
+
+        chmod($fileLog, $this->permissions);
     }
 
     /**
+     * Logging of the exception object with
+     * the possibility of adding additional keys.
+     *
      * @param Throwable $throwable
-     * @param string $fileName
      * @param bool $withTrace
      * @param array $payload
+     *
      * @return void
+     *
+     * @example exception(new \Exceptions(), sprintf("exceptions-%s", date('H:i:s')))
+     * @example exception(new \Exceptions(), "exceptions", true)
+     * @example exception(new \Exceptions(), "exceptions", false, ['advanced-key' => 'advanced-value'])
      */
-    public function putException(
+    public function exception(
         Throwable $throwable,
-        string $fileName,
         bool $withTrace = false,
         array $payload = []
     ) {
-        $this->putData(array_merge($payload, [
+        $this->custom(array_merge($payload, [
             'message' => $throwable->getMessage(),
             'file' => $throwable->getFile(),
             'line' => $throwable->getLine(),
         ], $withTrace ? [
             'trace' => $throwable->getTraceAsString()
-        ] : []), $fileName);
+        ] : []));
     }
 }
