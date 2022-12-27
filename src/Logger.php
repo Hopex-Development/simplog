@@ -169,6 +169,8 @@ class Logger
      * saved from other files.
      *
      * @return Logger
+     *
+     * @example clearLevel()
      */
     public function clearLevel(): Logger
     {
@@ -321,10 +323,9 @@ class Logger
      *
      * @return void
      *
-     * @example put((new SomeClass(), sprintf("classes-%s", date('H:i:s')))
-     * @example put('Some message', 'messages.log')
-     * @example put('Some message', 'messages')
-     * @example put(['key' => 'value'], 'arrays')
+     * @example custom(new SomeClass()
+     * @example custom('Some message')
+     * @example custom(['key' => 'value'])
      */
     public function custom($data)
     {
@@ -378,15 +379,12 @@ class Logger
      *
      * @return void
      *
-     * @example exception(new \Exceptions(), sprintf("exceptions-%s", date('H:i:s')))
-     * @example exception(new \Exceptions(), "exceptions", true)
-     * @example exception(new \Exceptions(), "exceptions", false, ['advanced-key' => 'advanced-value'])
+     * @example exception(new \Exceptions())
+     * @example exception(new \Exceptions(), true)
+     * @example exception(new \Exceptions(), false, ['key' => 'value'])
      */
-    public function exception(
-        Throwable $throwable,
-        bool $withTrace = false,
-        array $payload = []
-    ) {
+    public function exception(Throwable $throwable, bool $withTrace = false, array $payload = [])
+    {
         $this->custom(array_merge($payload, [
             'message' => $throwable->getMessage(),
             'file' => $throwable->getFile(),

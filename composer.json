@@ -3,7 +3,7 @@
     "description": "Simple data logging with customize directories.",
     "type": "library",
     "keywords": ["php", "log", "logger", "logging"],
-    "version": "2.0",
+    "version": "2.1",
     "require": {
         "php": "^7.4",
         "ext-json": "*"

@@ -1,7 +1,6 @@
 # Simple data logging
 
 <p>
-    <img alt="Package version" src="https://packages-api.hopex.ru/api/simplog/version/package">
     <img alt="Package version" src="https://packages-api.hopex.ru/api/simplog/packagist/hopex/downloads">
     <img alt="Package version" src="https://packages-api.hopex.ru/api/simplog/packagist/hopex/stars">
     <img alt="PHP version" src="https://packages-api.hopex.ru/api/simplog/version/php">
@@ -16,78 +15,21 @@ The library contains a simple class, and it's facade, for simple data and except
 composer require hopex/simplog
 ```
 
-## Usage
+## Documentation
 
-Simple data logging. Your data will be saved to a file `./logs/runtime/NameOfLogFile.log`:
-```php
-(new Logger())->putData($data, 'NameOfLogFile');
-```
-
-### Directory
-
-Default logging directory is `./logs/`. You can change the location directory of the log 
-files and the "logging level", after which your logging file will be 
-saved along the path `./example/logs/MyLevel/NameOfLogFile.log`:
-```php
-(new Logger())
-    ->setWorkDirectory('example/logs')
-    ->setLevel('MyLevel')
-    ->putData($data, 'NameOfLogFile');
-```
-
-### Date and time format
-
-Timezone default UTC and date format is `Y-m-d H:i:s`. You can also change the time format and time zone that are used inside the logging files:
-```php
-(new Logger())
-    ->setTimeZone('Europe/Moscow')
-    ->setDateFormat('(Y) H:i:s')
-    ->putData([
-        'example' => [
-            'parameter' => 1    
-        ]
-    ], 'NameOfLogFile');
-```
-Output log file:
-```json
-{
-    "(2022) 19:13:28": {
-        "example": {
-          "parameter": 1
-        }
-    }
-}
-```
-
-### Data of exceptions
-
-You can log exception data by easily passing it to the `putException` function:
-
-```php
-(new Logger())
-    ->setDateFormat('H:i:s')
-    ->setLevel('Exceptions')
-    ->putException($e, date('Y-m-d'), true);
-```
-Output log file `./logs/exceptions/2022.24.12.log`:
-```json
-{
-    "17:45:31": {
-        "message": "Some message",
-        "file": "G:\\OSPanel\\domains\\localhost\\example.php",
-        "line": 10,
-        "trace": "#0 {main}"
-    }
-}
-```
-
-### Common
-
-The class has a built-in function `clearLevel` of cleaning the logging working directory 
-from unnecessary files:
-
-```php
-(new Logger())
-    ->clearLevel()
-    ->putData($data, 'NameOfLogFile');
-```
+| Methods            | Description                                                                                                                                                                | Example for usage                                                                                                                       |
+|:-------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `setWorkDirectory` | Specifies the root directory of the hierarchy of logging levels. It can take several directories in turn one after the other in the form of a standard path.               | `setWorkDirectory('logging')` <br> `setWorkDirectory('logging/sub-folder')`                                                             |
+| `setLevel`         | Specifies the name of the directory where you want to save the logging file. It can't take several directories in turn one after the other in the form of a standard path. | `setLevel('requests')`                                                                                                                  |
+| `setTimeZone`      | Specifies the current timezone.                                                                                                                                            | `setTimeZone('UTC')` <br> `setTimeZone('Europe/Amsterdam')`                                                                             |
+| `setDateFormat`    | Sets the time format in the main key of one log element in the logging file. Will not be used if V is specified.                                                           | `setDateFormat('H:i:s')` <br> `setDateFormat('(Y) H:i:s')`                                                                              |
+| `setItemKey`       | Sets the primary key of one log element in the logging file. In this case, the current time will not be indicated.                                                         | `setItemKey('custom-key')`                                                                                                              |
+| `setItemsLimit`    | Sets the maximum number of elements in a single logging file. The value must be greater than zero. By default, 1000 keys.                                                  | `setItemsLimit(10)` <br> `setItemsLimit(5000)`                                                                                          |
+| `setPermissions`   | Sets access rights to the logging file.                                                                                                                                    | `setLogFilePermissions(0755)` <br> `setLogFilePermissions(644)`                                                                         |
+| `setFileName`      | Sets the name of the logging file.                                                                                                                                         | `setFileName('my-requests-logs')`                                                                                                       |
+| `error`            | Logging any object as an error message.                                                                                                                                    | Similarly as for `custom`.                                                                                                              |
+| `warning`          | Logging any object as a warning.                                                                                                                                           | Similarly as for `custom`.                                                                                                              |
+| `info`             | Logging of any object as an informational message.                                                                                                                         | Similarly as for `custom`.                                                                                                              |
+| `custom`           | Logging of any object.                                                                                                                                                     | `custom(new SomeClass())` <br> `custom('Some message')` <br> `custom(['key' => 'value'])`                                               |
+| `exception`        | Logging of the exception object with the possibility of adding additional keys.                                                                                            | `exception(new \Exceptions())` <br> `exception(new \Exceptions(), true)` <br> `exception(new \Exceptions(), false, ['key' => 'value'])` |
+| `clearLevel`       | The requirement to clear the directory where the logging file should be saved from other files.                                                                            | `clearLevel()`                                                                                                                          |
