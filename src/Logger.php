@@ -69,7 +69,7 @@ class Logger
         $this->clearLevel = false;
         $this->setWorkDirectory('.' . DIRECTORY_SEPARATOR . 'logs');
         $this->setLevel('runtime');
-        $this->setFilePermissions(0755);
+        $this->setFilePermissions(0775);
         $this->setDirectoryPermissions(0664);
         $this->setItemKey(null);
         $this->setItemsLimit(1000);
@@ -208,6 +208,7 @@ class Logger
 
     /**
      * Sets access rights to the logging file.
+     * By default, 0775
      *
      * @param int $rights
      *
@@ -224,13 +225,14 @@ class Logger
 
     /**
      * Sets access rights to the directory logging.
+     * By default, 664
      *
      * @param int $rights
      *
      * @return Logger
      *
-     * @example setFilePermissions(0755)
-     * @example setFilePermissions(664)
+     * @example setDirectoryPermissions(0755)
+     * @example setDirectoryPermissions(664)
      */
     public function setDirectoryPermissions(int $rights): Logger
     {
