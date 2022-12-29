@@ -386,7 +386,10 @@ class Logger
                 sprintf(
                     ($this->itemKey ?? $nowTime) . " (%s)",
                     substr(hash("md5", mt_rand(0, 10000)), 0 ,8)
-                )  => $data
+                )  => [
+                    'type' => gettype($data),
+                    'data' => $data,
+                ]
             ], $above), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
 
