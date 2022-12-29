@@ -52,7 +52,12 @@ class Logger
     /**
      * @var int
      */
-    private int $permissions;
+    private int $filePermissions;
+
+    /**
+     * @var int
+     */
+    private int $directoryPermissions;
 
     /**
      * @var string
@@ -64,7 +69,8 @@ class Logger
         $this->clearLevel = false;
         $this->setWorkDirectory('.' . DIRECTORY_SEPARATOR . 'logs');
         $this->setLevel('runtime');
-        $this->setPermissions(0755);
+        $this->setFilePermissions(0755);
+        $this->setDirectoryPermissions(0664);
         $this->setItemKey(null);
         $this->setItemsLimit(1000);
         $this->setTimeZone('UTC');
@@ -207,12 +213,28 @@ class Logger
      *
      * @return Logger
      *
-     * @example setLogFilePermissions(0755)
-     * @example setLogFilePermissions(644)
+     * @example setFilePermissions(0755)
+     * @example setFilePermissions(664)
      */
-    public function setPermissions(int $rights): Logger
+    public function setFilePermissions(int $rights): Logger
     {
-        $this->permissions = $rights;
+        $this->filePermissions = $rights;
+        return $this;
+    }
+
+    /**
+     * Sets access rights to the directory logging.
+     *
+     * @param int $rights
+     *
+     * @return Logger
+     *
+     * @example setFilePermissions(0755)
+     * @example setFilePermissions(664)
+     */
+    public function setDirectoryPermissions(int $rights): Logger
+    {
+        $this->directoryPermissions = $rights;
         return $this;
     }
 
@@ -337,7 +359,7 @@ class Logger
         $fileLog = $directoryLog . DIRECTORY_SEPARATOR . $fileName . '.log';
 
         if (!file_exists($directoryLog)) {
-            mkdir($directoryLog, 0644, true);
+            mkdir($directoryLog, $this->directoryPermissions, true);
         }
 
         if ($this->clearLevel) {
@@ -366,7 +388,7 @@ class Logger
             ], $above), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
 
-        chmod($fileLog, $this->permissions);
+        chmod($fileLog, $this->filePermissions);
     }
 
     /**
