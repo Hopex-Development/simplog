@@ -69,8 +69,8 @@ class Logger
         $this->clearLevel = false;
         $this->setWorkDirectory('.' . DIRECTORY_SEPARATOR . 'logs');
         $this->setLevel('runtime');
-        $this->setFilePermissions(0755);
-        $this->setDirectoryPermissions(0664);
+        $this->setFilePermissions(0775);
+        $this->setDirectoryPermissions(0775);
         $this->setItemKey(null);
         $this->setItemsLimit(1000);
         $this->setTimeZone('UTC');
